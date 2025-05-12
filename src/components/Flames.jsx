@@ -11,21 +11,37 @@ const Flames = () => {
     setValue2(e.target.value);
   };
   const calculate = () => {
-    let string1 = value1;
-    let string2 = value2;
-    let res1 = "";
-    let res2 = "";
-    for (let i = 0; i < string1.length; i++) {
-      if (!string2.includes(string1[i])) {
-        res1 = res1 + string1[i];
+    let totalLength = 0;
+    const hash_map1 = new Map();
+    const hash_map2 = new Map();
+
+    for (let i = 0; i < value1.length; i++) {
+      if (!hash_map1.has(value1[i])) {
+        hash_map1.set(value1[i], 0);
+      }
+      hash_map1.set(value1[i], hash_map1.get(value1[i]) + 1);
+    }
+
+    for (let i = 0; i < value2.length; i++) {
+      if (!hash_map2.has(value2[i])) {
+        hash_map2.set(value2[i], 0);
+      }
+      hash_map2.set(value2[i], hash_map2.get(value2[i]) + 1);
+    }
+    let arr1 = value1.split("");
+    let arr2 = value2.split("");
+    let arr = arr1.concat(arr2);
+    let hash_set = new Set(arr);
+    for (let key of hash_set) {
+      if (hash_map1.has(key) && hash_map2.has(key)) {
+        totalLength += Math.abs(hash_map1.get(key) - hash_map2.get(key));
+      } else if (hash_map1.has(key)) {
+        totalLength += hash_map1.get(key);
+      } else {
+        totalLength += hash_map2.get(key);
       }
     }
-    for (let i = 0; i < string2.length; i++) {
-      if (!string1.includes(string2[i])) {
-        res2 = res2 + string2[i];
-      }
-    }
-    let totalLength = res1.length + res2.length;
+
     let modLength = totalLength % 6;
     const map = {
       1: "Friends",
@@ -56,7 +72,7 @@ const Flames = () => {
         type="text"
         data-testid="input2"
         name="name2"
-        placeholder="Enter the seciond name"
+        placeholder="Enter the second name"
         value={value2}
         onChange={handlechange2}
       />
